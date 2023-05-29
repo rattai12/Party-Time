@@ -4,17 +4,12 @@
 #include <string>
 #include <sstream>
 
-using namespace std;
 
 
 
-void Drink::blandaDrink()
-{
-
-}
-
-void Drink::readDrinks()
-{
+void Drink::readDrinks() {
+    Ingredient ingredients;
+    ingredients.readPrice();
     drinkRead("d1.txt");
     drinkRead("d2.txt");
     drinkRead("d3.txt");
@@ -25,8 +20,7 @@ void Drink::readDrinks()
     drinkRead("d8.txt");
 }
 
-void Drink::drinkRead(string filnamn)
-{
+void Drink::drinkRead(string filnamn) {
     ifstream inputFile(filnamn);
 
     if (!inputFile.is_open()) {
@@ -36,68 +30,97 @@ void Drink::drinkRead(string filnamn)
 
     string drinkName;
     getline(inputFile, drinkName); // Read the drink name
-
-    // Create a new Drink object
-    Drink* myDrink = new Drink();
-    myDrink->name = drinkName;
+   // cout << "Drink: " << drinkName << endl;
+    vector<Ingredient> ingredients;
 
     string ingredientName;
     string ingredientAmount;
     string ingredientLine;
-    int linenum = 0;
 
     while (getline(inputFile, ingredientLine)) {
-        if (linenum == 0) {
-            drinkName = ingredientLine;
-            linenum++;
-        }else{
-            int index = ingredientLine.find("cl");
-            ingredientAmount = ingredientLine.substr(0, index - 1);
-            ingredientName = ingredientLine.substr(index + 3);
+        int index = ingredientLine.find("cl");
+        ingredientAmount = ingredientLine.substr(0, index - 1);
+        ingredientName = ingredientLine.substr(index + 3);
 
-            // For example, printing the ingredient details
-            
-            cout << drinkName << " Ingredient: " << ingredientName << ", Amount: " << ingredientAmount << " cl" << endl;
+        int amount = stoi(ingredientAmount);
+        ingredients.push_back(Ingredient(ingredientName, amount));
 
-        }
-        Drink drink(ingredient, drinkName, ;
-        
+        // For example, printing the ingredient details
+       //cout << "Ingredient: " << ingredientName << ", Amount: " << ingredientAmount << " cl" << endl;
     }
 
-  
-
-    // Remember to deallocate the memory for the created Drink object
-    delete myDrink;
-
-    inputFile.close();
+    Drink drink(drinkName, ingredients);
+    drinkList.push_back(drink);
+    // Add 'drink' to a list of drinks or do something else with it
 }
 
-
-
-
-
-void Ingredients::readPrice()
+void Drink::showDrinks()
 {
-	Ingredients ingredient;
-	string line;
-	ifstream pris("prislista.txt");
+    for (int i = 0; i < size(drinkList); i++) {
+        cout << i+1 <<". " << drinkList[i].name << endl;
+    }
 
-	while (getline(pris, line)) {
-		stringstream ss(line);
-		string price_string;
-		ss >> price_string;
-		ss >> ingredient.ingredient;
-
-		ingredient.price = stoi(price_string);
-		priceList.push_back(ingredient); // l�gger in priserna i en prislista med ett objekt av drink. 
-	}
-	pris.close();
 }
 
-void Ingredients::showPricelist()
+void Drink::showSpecificDrink(int number)
 {
-	for (int i = 0; i < size(priceList); i++) {
-		cout << (priceList[i].price) << " kr   ";
-		cout << priceList[i].ingredient << endl;
-	}
+    Ingredient ingredient;
+    Drink drink;
+    ingredient.readPrice();
+    int tot_pris = 0;
+    cout << "Drink: " << drinkList[number].name << endl;
+    for (int i = 0; i < size(drinkList[number].ingredientList); i++) {
+        int ingredient_price = 0;
+        for (int j = 0; j < size(ingredient.priceList); j++) {
+            if (drinkList[number].ingredientList[i].ingredient == ingredient.priceList[j].ingredient) {
+                ingredient_price += ingredient.priceList[j].price;
+                break;
+            }
+        }
+        tot_pris += ingredient_price;
+        cout << drinkList[number].ingredientList[i].ingredient << " " << ingredient_price << "kr" << endl;
+    }
+    cout << "Det totala priset för drinken " << drinkList[number].name << " är " << tot_pris << "kr" << endl;
 }
+
+void Ingredient::readPrice() {
+    string line;
+    ifstream pris("prislista.txt");
+
+    if (!pris.is_open()) {
+        cout << "Failed to open the file." << endl;
+        return;
+    }
+
+    while (getline(pris, line)) {
+        stringstream ss(line);
+        string price_string;
+        ss >> price_string;
+        ss >> ingredient;
+
+        price = stoi(price_string);
+        Ingredient newIngredient(ingredient, price); // create a new Ingredient object
+        priceList.push_back(newIngredient); // add the new I
+    }
+}
+
+void Ingredient::showPricelist()
+{
+    // Assuming priceList is a vector<Ingredient>
+    for (int i = 0; i < size(priceList); i++) {
+        cout << priceList[i].price << " kr " << priceList[i].ingredient << endl;
+    }
+}
+void Drink::blendDrink()
+{
+    int drinkval;
+    bool run = true;
+    while (run) {
+        showDrinks();
+        cout << "Ange vilken drink du vill blanda: " << endl;
+        cin >> drinkval;
+        showSpecificDrink(drinkval-1); // minus one because the for loop starts at index 0.
+
+    }
+}
+
