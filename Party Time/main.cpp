@@ -8,18 +8,20 @@ void svenska() {
 }
 
 int main() {
-	Drink drink;
+	
 	svenska();
-	drink.readPrice();
-	drink.readDrinks();
+	//extern Ingredient globalIngredients;
+	
 
 	bool run = true;
 	while (run) {
+		Drink drink;
+		Ingredient ingredient;
 		int menyval;
-
+		
 		cout << "1. Blanda drink" << endl;
-		cout << "2. Sök på namn" << endl;
-		cout << "3. Sök på ingrediens" << endl;
+		cout << "2. SÃ¶k pÃ¥ namn" << endl;
+		cout << "3. SÃ¶k pÃ¥ ingrediens" << endl;
 		cout << "4. Visa prislista" << endl;
 
 		cout << "\nAnge val: ";
@@ -27,7 +29,9 @@ int main() {
 		switch (menyval) {
 
 		case 1:
-			break;
+			drink.readDrinks();
+			drink.blendDrink();
+			
 
 
 		case 2:
@@ -35,7 +39,8 @@ int main() {
 		case 3:
 			break;
 		case 4:
-			drink.showPricelist();
+			ingredient.readPrice();
+			ingredient.showPricelist();
 			break;
 
 		case 0:
